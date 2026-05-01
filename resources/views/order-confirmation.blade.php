@@ -175,59 +175,81 @@
                 <div class="order-card">
                     <p class="oc-title"><i class="fas fa-info-circle"></i> Statut de la commande</p>
                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
-                        <span class="status-badge status-pending">
-                            <span class="status-dot"></span>
-                            En attente de paiement
-                        </span>
+                        @if(!empty($order['statut_paiement']) && $order['statut_paiement'] === 'paye')
+                            <span style="color:var(--green);" class="status-badge  status-success">
+                                <span class="status-dot"></span>
+                                Paiement confirmé
+                            </span>
+                        @else
+                            <span class="status-badge status-pending">
+                                <span class="status-dot"></span>
+                                En attente de paiement
+                            </span>
+                        @endif
                         <span style="font-size:13px;color:var(--muted);">
                             <i class="fas fa-clock"></i> Mise à jour dans quelques minutes
                         </span>
                     </div>
                 </div>
 
-                {{-- ===== INSTRUCTIONS MOBILE MONEY ===== --}}
+                {{-- ===== INSTRUCTIONS DE PAIEMENT ===== --}}
                 <div class="order-card">
                     <p class="oc-title">
                         <i class="fas fa-mobile-alt"></i>
-                        Finaliser le paiement —
-                        {{ $order['momo_operateur'] === 'mtn' ? '🟡 MTN MoMo' : '🔵 Moov Money' }}
+                        @if(!empty($order['momo_operateur']))
+                            Finaliser le paiement —
+                            {{ $order['momo_operateur'] === 'mtn' ? '🟡 MTN MoMo' : '🔵 Moov Money' }}
+                        @else
+                            Paiement sécurisé via Kkiapay
+                        @endif
                     </p>
 
                     <div class="momo-steps">
-                        @if($order['momo_operateur'] === 'mtn')
-                        <div class="momo-step">
-                            <div class="ms-num">1</div>
-                            <p class="ms-text">Composez le <strong>*880#</strong> ou ouvrez l'app <strong>MTN MoMo</strong> sur votre téléphone.</p>
-                        </div>
-                        <div class="momo-step">
-                            <div class="ms-num">2</div>
-                            <p class="ms-text">Sélectionnez <strong>« Paiement marchand »</strong> puis entrez le code marchand <strong>FreshMarket</strong>.</p>
-                        </div>
-                        <div class="momo-step">
-                            <div class="ms-num">3</div>
-                            <p class="ms-text">Entrez le montant exact : <strong>{{ number_format($order['total'], 0, ',', ' ') }} FCFA</strong></p>
-                        </div>
-                        <div class="momo-step">
-                            <div class="ms-num">4</div>
-                            <p class="ms-text">Confirmez avec votre <strong>code PIN MTN MoMo</strong>. Vous recevrez un SMS de confirmation.</p>
-                        </div>
+                        @if(!empty($order['momo_operateur']))
+                            @if($order['momo_operateur'] === 'mtn')
+                                <div class="momo-step">
+                                    <div class="ms-num">1</div>
+                                    <p class="ms-text">Composez le <strong>*880#</strong> ou ouvrez l'app <strong>MTN MoMo</strong> sur votre téléphone.</p>
+                                </div>
+                                <div class="momo-step">
+                                    <div class="ms-num">2</div>
+                                    <p class="ms-text">Sélectionnez <strong>« Paiement marchand »</strong> puis entrez le code marchand <strong>FreshMarket</strong>.</p>
+                                </div>
+                                <div class="momo-step">
+                                    <div class="ms-num">3</div>
+                                    <p class="ms-text">Entrez le montant exact : <strong>{{ number_format($order['total'], 0, ',', ' ') }} FCFA</strong></p>
+                                </div>
+                                <div class="momo-step">
+                                    <div class="ms-num">4</div>
+                                    <p class="ms-text">Confirmez avec votre <strong>code PIN MTN MoMo</strong>. Vous recevrez un SMS de confirmation.</p>
+                                </div>
+                            @else
+                                <div class="momo-step">
+                                    <div class="ms-num">1</div>
+                                    <p class="ms-text">Composez le <strong>*155#</strong> ou ouvrez l'app <strong>Moov Money</strong> sur votre téléphone.</p>
+                                </div>
+                                <div class="momo-step">
+                                    <div class="ms-num">2</div>
+                                    <p class="ms-text">Sélectionnez <strong>« Paiement »</strong> puis entrez le code marchand <strong>FreshMarket</strong>.</p>
+                                </div>
+                                <div class="momo-step">
+                                    <div class="ms-num">3</div>
+                                    <p class="ms-text">Entrez le montant exact : <strong>{{ number_format($order['total'], 0, ',', ' ') }} FCFA</strong></p>
+                                </div>
+                                <div class="momo-step">
+                                    <div class="ms-num">4</div>
+                                    <p class="ms-text">Confirmez avec votre <strong>code PIN Flooz</strong>. Vous recevrez un SMS de confirmation.</p>
+                                </div>
+                            @endif
                         @else
-                        <div class="momo-step">
-                            <div class="ms-num">1</div>
-                            <p class="ms-text">Composez le <strong>*155#</strong> ou ouvrez l'app <strong>Moov Money</strong> sur votre téléphone.</p>
-                        </div>
-                        <div class="momo-step">
-                            <div class="ms-num">2</div>
-                            <p class="ms-text">Sélectionnez <strong>« Paiement »</strong> puis entrez le code marchand <strong>FreshMarket</strong>.</p>
-                        </div>
-                        <div class="momo-step">
-                            <div class="ms-num">3</div>
-                            <p class="ms-text">Entrez le montant exact : <strong>{{ number_format($order['total'], 0, ',', ' ') }} FCFA</strong></p>
-                        </div>
-                        <div class="momo-step">
-                            <div class="ms-num">4</div>
-                            <p class="ms-text">Confirmez avec votre <strong>code PIN Flooz</strong>. Vous recevrez un SMS de confirmation.</p>
-                        </div>
+                            <div class="momo-step">
+                                <div class="ms-num">1</div>
+                                <p class="ms-text">Votre paiement a été effectué via Kkiapay. Votre commande est confirmée.</p>
+                            </div>
+                            <div class="momo-step">
+                                <div class="ms-num">2</div>
+                                <p class="ms-text">Vous pouvez vérifier votre transaction depuis le dashboard Kkiapay ou via votre SMS de confirmation.</p>
+                            </div>
                         @endif
                     </div>
                 </div>

@@ -145,11 +145,14 @@
     }
 
     window.addSuccessListener(function(response) {
-        if (response && response.transactionId) {
-            window.location.href = "{{ route('cart.payment') }}?transaction_id=" + encodeURIComponent(response.transactionId);
-        } else {
-            window.location.href = "{{ route('cart.checkout') }}";
+        const transactionId = response?.transactionId || response?.transaction_id || response?.data?.transactionId || response?.data?.transaction_id;
+        if (transactionId) {
+            window.location.href = "{{ route('cart.payment') }}?transaction_id=" + encodeURIComponent(transactionId);
+            return;
         }
+
+        console.error('Kkiapay success event sans transaction_id', response);
+        window.location.href = "{{ route('cart.checkout') }}";
     });
 
     window.addFailedListener(function() {

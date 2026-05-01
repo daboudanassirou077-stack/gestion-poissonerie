@@ -248,7 +248,14 @@ class CartController extends Controller
 
             \Log::info('Kkiapay verification response', ['transaction_id' => $transactionId, 'response' => $verification]);
 
-            if (!is_array($verification) || $verification['status'] !== 'SUCCESS') {
+            $status = null;
+            if (is_array($verification) && isset($verification['status'])) {
+                $status = $verification['status'];
+            } elseif (is_object($verification) && isset($verification->status)) {
+                $status = $verification->status;
+            }
+
+            if ($status !== 'SUCCESS') {
                 // Marquer le paiement comme échoué
                 $commande->update(['statut_paiement' => 'echoue']);
                 return redirect()->route('cart.checkout')->with('error', 'Paiement échoué. Veuillez réessayer.');
@@ -259,6 +266,8 @@ class CartController extends Controller
                 'statut_paiement' => 'paye',
                 'statut_cmd' => 'confirmee',
             ]);
+
+            $commande->refresh();
 
             // Stocker en session pour la page de confirmation
             session([
@@ -271,6 +280,8 @@ class CartController extends Controller
                     'instructions'   => $commande->instructions_livraison,
                     'total'          => $commande->montant_total,
                     'transaction_id' => $transactionId,
+                    'momo_operateur' => $commande->momo_operateur ?? null,
+                    'statut_paiement' => 'paye',
                     'articles'       => $commande->produits->map(function($produit) {
                         return [
                             'id' => $produit->id_prod,
@@ -301,6 +312,7 @@ class CartController extends Controller
     public function confirmation()
     {
         $order = session('last_order');
+        // dd($order);
 
         if (!$order) {
             return redirect()->route('home');
