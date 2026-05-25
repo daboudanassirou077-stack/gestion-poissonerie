@@ -88,4 +88,9 @@ class User extends Authenticatable
     {
         return $this->role === 'client';
     }
+
+    public function isBloque(): bool
+    {
+        return $this->role === 'bloque';
+    }
 }

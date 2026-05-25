@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Dashboard Gérant - FreshMarket')
 
@@ -126,6 +126,10 @@
                     <a href="{{ route('gerant.produits') }}" class="dash-menu-item">
                         <i class="fas fa-fish"></i> Produits
                         <span class="badge bg-primary ms-auto">{{ $stats['total_produits'] }}</span>
+                    </a>
+                    <a href="{{ route('gerant.categories') }}" class="dash-menu-item">
+                        <i class="fas fa-tags"></i> Catégories
+                        <span class="badge bg-secondary ms-auto">{{ $categories->count() }}</span>
                     </a>
                     <a href="{{ route('gerant.stocks') }}" class="dash-menu-item">
                         <i class="fas fa-boxes"></i> Stocks

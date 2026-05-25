@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Suivi Commandes - Gérant FreshMarket')
 
@@ -259,9 +259,9 @@
             <div class="mb-4">
                 <label class="form-label-fm">Statut paiement</label>
                 <select name="statut_paiement" id="modalPaiement" class="form-ctrl">
-                    <option value="en_attente">En attente</option>
+                    {{-- <option value="en_attente">En attente</option> --}}
                     <option value="paye">Payé</option>
-                    <option value="echoue">Échoué</option>
+                    {{-- <option value="echoue">Échoué</option> --}}
                 </select>
             </div>
 

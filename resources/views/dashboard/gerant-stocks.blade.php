@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Gestion Stocks - Gérant FreshMarket')
 
@@ -54,6 +54,61 @@
     .alert-fm { border-radius:10px; padding:12px 16px; font-size:14px; font-weight:600; margin-bottom:20px; display:flex; align-items:center; gap:8px; }
     .alert-success-fm { background:rgba(39,174,96,.1);  border:1.5px solid rgba(39,174,96,.25);  color:#1e7e44; }
     .alert-warning-fm { background:rgba(232,131,10,.1); border:1.5px solid rgba(232,131,10,.25); color:#a05c00; }
+
+    /* ===== PAGINATION MODERNE ===== */
+
+    .pagination-wrap{
+        display:flex;
+        justify-content:center;
+        padding:20px;
+    }
+
+    .pagination{
+        display:flex;
+        gap:8px;
+        list-style:none;
+        padding:0;
+        margin:0;
+    }
+
+    .page-item{
+        list-style:none;
+    }
+
+    .page-link{
+        width:38px;
+        height:38px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        border-radius:10px;
+        border:1px solid #e2e8f0;
+        background:#fff;
+        color:var(--dark);
+        font-size:14px;
+        font-weight:600;
+        text-decoration:none;
+        transition:.25s ease;
+        box-shadow:0 2px 8px rgba(0,0,0,.05);
+    }
+
+    .page-link:hover{
+        background:var(--primary);
+        color:#fff;
+        border-color:var(--primary);
+        transform:translateY(-2px);
+    }
+
+    .page-item.active .page-link{
+        background:var(--primary);
+        color:#fff;
+        border-color:var(--primary);
+    }
+
+    .page-item.disabled .page-link{
+        opacity:.4;
+        pointer-events:none;
+    }
 </style>
 @endsection
 
@@ -201,8 +256,43 @@
                     </table>
 
                     @if($stocks->hasPages())
-                    <div style="padding:16px 18px;border-top:1px solid #f0f0f0;">
-                        {{ $stocks->links() }}
+                    <div class="pagination-wrap">
+                        <ul class="pagination">
+                            {{-- Précédent --}}
+                            @if ($stocks->onFirstPage())
+                                <li class="page-item disabled">
+                                    <span class="page-link">‹</span>
+                                </li>
+                            @else
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $stocks->previousPageUrl() }}">‹</a>
+                                </li>
+                            @endif
+
+                            {{-- Numéros --}}
+                            @foreach ($stocks->getUrlRange(1, $stocks->lastPage()) as $page => $url)
+                                @if ($page == $stocks->currentPage())
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ $page }}</span>
+                                    </li>
+                                @else
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                    </li>
+                                @endif
+                            @endforeach
+
+                            {{-- Suivant --}}
+                            @if ($stocks->hasMorePages())
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $stocks->nextPageUrl() }}">›</a>
+                                </li>
+                            @else
+                                <li class="page-item disabled">
+                                    <span class="page-link">›</span>
+                                </li>
+                            @endif
+                        </ul>
                     </div>
                     @endif
                 </div>

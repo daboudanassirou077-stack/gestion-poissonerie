@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Gestion Catégories - Admin FreshMarket')
 
@@ -122,29 +122,27 @@
                         <h5>➕ Ajouter une catégorie</h5>
                     </div>
                     <div class="section-card-body">
-                        <form action="{{ route('admin.store-categorie') }}" method="POST">
+                        <form action="{{ route('admin.store-categorie') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
-                                <div class="col-md-5 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <label class="form-label-fm">Libellé <span style="color:var(--accent)">*</span></label>
-                                    <input type="text" name="libelle"
-                                        class="form-ctrl"
-                                        placeholder="Ex: Poissons frais"
-                                        value="{{ old('libelle') }}" required>
+                                    <input type="text" name="libelle" class="form-ctrl"
+                                        placeholder="Ex: Poissons frais" value="{{ old('libelle') }}" required>
                                 </div>
-                                <div class="col-md-5 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <label class="form-label-fm">Description</label>
-                                    <input type="text" name="description"
-                                        class="form-ctrl"
-                                        placeholder="Description courte..."
-                                        value="{{ old('description') }}">
+                                    <input type="text" name="description" class="form-ctrl"
+                                        placeholder="Description courte..." value="{{ old('description') }}">
                                 </div>
-                                <div class="col-md-2 mb-3 d-flex align-items-end">
-                                    <button type="submit" class="btn-sm-fm btn-primary-fm w-100" style="padding:12px;">
-                                        <i class="fas fa-plus"></i> Ajouter
-                                    </button>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label-fm">Image de la catégorie</label>
+                                    <input type="file" name="image" class="form-ctrl" accept="image/*">
                                 </div>
                             </div>
+                            <button type="submit" class="btn-sm-fm btn-primary-fm" style="padding:10px 20px;">
+                                <i class="fas fa-plus"></i> Ajouter
+                            </button>
                         </form>
                     </div>
                 </div>

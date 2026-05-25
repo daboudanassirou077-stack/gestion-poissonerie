@@ -25,6 +25,6 @@ class LivraisonCl extends Model
 
     public function livreur()
     {
-        return $this->belongsTo(LivreurCl::class, 'id_livreur', 'id_livreur');
+        return $this->belongsTo(Livreur::class, 'id_livreur', 'id_livreur');
     }
 }

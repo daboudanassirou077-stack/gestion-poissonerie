@@ -49,7 +49,23 @@ class AdminController extends Controller
     // ===== LISTE UTILISATEURS =====
     public function users()
     {
-        $users = User::orderBy('created_at', 'desc')->paginate(10);
+        $query = User::query();
+
+        $query->when(trim(request('q', '')) !== '', function ($q) {
+            $search = '%'.trim(request('q')).'%';
+            $q->where(function ($sub) use ($search) {
+                $sub->where('nom', 'like', $search)
+                    ->orWhere('prenom', 'like', $search)
+                    ->orWhere('email', 'like', $search);
+            });
+        });
+
+        $query->when(request('role'), fn($q, $role) => $q->where('role', $role));
+
+        $users = $query->orderBy('created_at', 'desc')
+                       ->paginate(10)
+                       ->withQueryString();
+
         return view('dashboard.admin-users', compact('users'));
     }
 
@@ -136,20 +152,29 @@ class AdminController extends Controller
     }
 
     public function storeCategorie(Request $request)
-    {
-        $request->validate([
-            'libelle'     => 'required|string|max:100',
-            'description' => 'nullable|string',
-        ]);
+{
+    $request->validate([
+        'libelle'     => 'required|string|max:100',
+        'description' => 'nullable|string',
+        'image'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+    ]);
 
-        Categorie::create([
-            'libelle'     => $request->libelle,
-            'slug'        => \Illuminate\Support\Str::slug($request->libelle),
-            'description' => $request->description,
-        ]);
-
-        return back()->with('success', '✅ Catégorie ajoutée avec succès !');
+    // Upload image
+    $imageName = null;
+    if ($request->hasFile('image')) {
+        $imageName = time() . '_' . \Str::slug($request->libelle) . '.' . $request->image->extension();
+        $request->image->move(public_path('images/categories'), $imageName);
     }
+
+    Categorie::create([
+        'libelle'     => $request->libelle,
+        'slug'        => \Illuminate\Support\Str::slug($request->libelle),
+        'description' => $request->description,
+        'image'       => $imageName,
+    ]);
+
+    return back()->with('success', '✅ Catégorie ajoutée avec succès !');
+}
 
     public function deleteCategorie(Categorie $categorie)
     {

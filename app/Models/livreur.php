@@ -4,7 +4,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Livreur extends Model
 {
-    protected $table = 'livreurs';
+    protected $table = 'livreurs_cl';
     protected $primaryKey = 'id_livreur';
 
     protected $fillable = [

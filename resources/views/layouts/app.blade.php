@@ -111,18 +111,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('home') }}">Accueil</a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        Boutique
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{{ route('shop', ['categorie' => 'poissons-frais']) }}">🐟 Poissons frais</a></li>
-                        <li><a class="dropdown-item" href="{{ route('shop', ['categorie' => 'poissons-fumes']) }}">🔥 Poissons fumés</a></li>
-                        <li><a class="dropdown-item" href="{{ route('shop', ['categorie' => 'viandes']) }}">🥩 Viandes</a></li>
-                        <li><a class="dropdown-item" href="{{ route('shop', ['categorie' => 'volailles']) }}">🍗 Volailles</a></li>
-                        <li><a class="dropdown-item" href="{{ route('shop', ['categorie' => 'escargots']) }}">🐌 Escargots</a></li>
-                    </ul>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('shop') }}">Boutique</a>
+                    </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('about') }}">À propos</a>
                 </li>
@@ -273,7 +264,7 @@
         </div>
 
         <div class="footer-bottom">
-            <p>© 2024 FreshMarket Bénin. Tous droits réservés.</p>
+            <p>© 2026 FreshMarket Bénin. Tous droits réservés.</p>
         </div>
     </div>
 </footer>

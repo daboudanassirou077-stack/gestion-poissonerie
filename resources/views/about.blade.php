@@ -101,7 +101,7 @@
 /* ===== INSTAGRAM ===== */
 .instagram-section{background:var(--light);padding-bottom:0;}
 .insta-grid{display:grid;grid-template-columns:repeat(5,1fr);}
-.insta-item{position:relative;overflow:hidden;height:180px;display:flex;align-items:center;justify-content:center;font-size:60px;cursor:pointer;}
+.insta-item{position:relative;overflow:hidden;height:380px;display:flex;align-items:center;justify-content:center;font-size:60px;cursor:pointer;}
 .insta-item:nth-child(1){background:linear-gradient(135deg,var(--primary),#1a8aac);}
 .insta-item:nth-child(2){background:linear-gradient(135deg,#8B4513,#c0392b);}
 .insta-item:nth-child(3){background:linear-gradient(135deg,#2d6a2d,#4caf50);}
@@ -276,7 +276,9 @@
                             @if($membre->photo)
                                 <img src="{{ asset('images/equipe/'.$membre->photo) }}" style="width:100%;height:100%;object-fit:cover;" alt="{{ $membre->nom }}">
                             @else
-                                👤
+                               <img src="{{ asset('images/equipe/admin.jpg') }}" 
+                                alt="admin"
+                                style="width:100%;height:100%;object-fit:cover;">
                             @endif
                         </div>
                         <div class="team-body">
@@ -296,7 +298,9 @@
                 {{-- Données statiques par défaut --}}
                 <div class="col-lg-3 col-md-6 mb-4">
                     <div class="team-card">
-                        <div class="team-avatar">👨‍💼</div>
+                        <div class="team-avatar">
+                            <img src="{{ asset('images/equipe/geran.jpg') }}" style="width:100%;height:100%;object-fit:cover;" alt="Gérant">
+                        </div>
                         <div class="team-body">
                             <h4>Kofi Mensah</h4>
                             <span class="team-role">Gérant Général</span>
@@ -309,9 +313,12 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="col-lg-3 col-md-6 mb-4">
                     <div class="team-card">
-                        <div class="team-avatar">👩‍🍳</div>
+                        <div class="team-avatar">
+                            <img src="{{ asset('images/equipe/vendeur.jpg') }}" style="width:100%;height:100%;object-fit:cover;" alt="Vendeur">
+                        </div>
                         <div class="team-body">
                             <h4>Adjoua Bello</h4>
                             <span class="team-role">Responsable Produits</span>
@@ -324,9 +331,12 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="col-lg-3 col-md-6 mb-4">
                     <div class="team-card">
-                        <div class="team-avatar">👨‍💻</div>
+                        <div class="team-avatar">
+                            <img src="{{ asset('images/equipe/livraison.jpg') }}" style="width:100%;height:100%;object-fit:cover;" alt="Livraison">
+                        </div>
                         <div class="team-body">
                             <h4>Segun Dossou</h4>
                             <span class="team-role">Responsable Livraison</span>
@@ -339,9 +349,12 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="col-lg-3 col-md-6 mb-4">
                     <div class="team-card">
-                        <div class="team-avatar">👩‍💼</div>
+                        <div class="team-avatar">
+                            <img src="{{ asset('images/equipe/admin.jpg') }}" style="width:100%;height:100%;object-fit:cover;" alt="Admin">
+                        </div>
                         <div class="team-body">
                             <h4>Fatou Akplé</h4>
                             <span class="team-role">Service Client</span>
@@ -367,11 +380,11 @@
         <p class="text-muted mt-2">@freshmarket.bj — Arrivages du jour, promotions et coulisses</p>
     </div>
     <div class="insta-grid">
-        <div class="insta-item">🐟<div class="insta-overlay"><i class="fab fa-instagram"></i></div></div>
-        <div class="insta-item">🥩<div class="insta-overlay"><i class="fab fa-instagram"></i></div></div>
-        <div class="insta-item">🐌<div class="insta-overlay"><i class="fab fa-instagram"></i></div></div>
-        <div class="insta-item">🍗<div class="insta-overlay"><i class="fab fa-instagram"></i></div></div>
-        <div class="insta-item">🔥<div class="insta-overlay"><i class="fab fa-instagram"></i></div></div>
+        <div class="insta-item"><img src="{{ asset('images/bare/poule.jpg') }}" style="width:100%;height:100%;object-fit:cover;" alt="Poule"><div class="insta-overlay"><i class="fab fa-instagram"></i></div></div>
+        <div class="insta-item"><img src="{{ asset('images/bare/poisson.jpg') }}" style="width:100%;height:100%;object-fit:cover;" alt="Poisson"><div class="insta-overlay"><i class="fab fa-instagram"></i></div></div>
+        <div class="insta-item"><img src="{{ asset('images/bare/lapin.jpg') }}" style="width:100%;height:100%;object-fit:cover;" alt="Lapin"><div class="insta-overlay"><i class="fab fa-instagram"></i></div></div>
+        <div class="insta-item"><img src="{{ asset('images/bare/mouton.jpg') }}" style="width:100%;height:100%;object-fit:cover;" alt="Mouton"><div class="insta-overlay"><i class="fab fa-instagram"></i></div></div>
+        <div class="insta-item"><img src="{{ asset('images/bare/boeuf.jpg') }}" style="width:100%;height:100%;object-fit:cover;" alt="Boeuf"><div class="insta-overlay"><i class="fab fa-instagram"></i></div></div>
     </div>
 </section>
 

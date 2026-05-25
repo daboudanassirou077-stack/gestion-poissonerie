@@ -37,55 +37,77 @@ class CartController extends Controller
     // ───────────────────────────────────────────
     // Ajouter au panier
     // ───────────────────────────────────────────
-
-    public function add(Request $request)
-
+public function add(Request $request)
 {
     $request->validate([
         'produit_id' => 'required|integer',
-        'quantite'   => 'required|integer|min:1|max:50',
+        'quantite'   => 'required|numeric|min:0.1|max:100',
+        'calibre_id' => 'nullable|integer|exists:calibres,id_calibre',
     ]);
 
-    $id  = $request->produit_id;
-    $qty = (int) $request->quantite;
+    $id         = $request->produit_id;
+    $qty        = (float) $request->quantite;
+    $calibreId  = $request->calibre_id;
 
-    // Chercher le vrai produit en base
-    $produit = \App\Models\Produit::with(['categorie', 'calibre'])->find($id);
+    $produit = \App\Models\Produit::with(['categorie', 'calibre', 'stock'])->find($id);
 
     if (!$produit) {
         return back()->with('error', 'Produit introuvable.');
     }
 
-    // Vérifier le stock
     if ($produit->stock && $produit->stock->quantite_stock <= 0) {
         return back()->with('error', '❌ Ce produit est épuisé.');
     }
 
+    // Si c'est un poisson et qu'aucun calibre n'est choisi → erreur
+    $estPoisson = $produit->calibre && $produit->calibre->type_produit === 'poisson';
+    if ($estPoisson && !$calibreId) {
+        return back()->with('error', '⚠️ Veuillez choisir un calibre pour ce poisson.');
+    }
+
+    // Récupérer le calibre choisi
+    $calibre     = $calibreId ? \App\Models\Calibre::find($calibreId) : $produit->calibre;
+    $calibreNom  = $calibre ? ucfirst($calibre->taille ?? $calibre->type_produit) : '';
+
+    // Clé unique : produit + calibre (permet d'avoir Grande et Moyen séparément)
+    $cartKey = $estPoisson ? $id . '_cal_' . $calibreId : $id;
+
     $cart = $this->getCart();
 
-    if (isset($cart[$id])) {
-        $cart[$id]['quantite'] += $qty;
+    if (isset($cart[$cartKey])) {
+        $cart[$cartKey]['quantite'] += $qty;
     } else {
-        $cart[$id] = [
-            'id'        => $produit->id_prod,
-            'nom'       => $produit->libelle_prod,
-            'prix'      => $produit->prix,
-            'image'     => $produit->image,
-            'categorie' => $produit->categorie->libelle ?? '',
-            'unite'     => $produit->calibre->unite_vente ?? 'kg',
-            'quantite'  => $qty,
+        $cart[$cartKey] = [
+            'id'          => $produit->id_prod,
+            'nom'         => $produit->libelle_prod . ($calibreNom ? ' — ' . $calibreNom : ''),
+            'nom_base'    => $produit->libelle_prod,
+            'prix'        => $produit->prix,
+            'image'       => $produit->image,
+            'categorie'   => $produit->categorie->libelle ?? '',
+            'unite'       => 'kg',
+            'quantite'    => $qty,
+            'calibre_id'  => $calibreId,
+            'calibre_nom' => $calibreNom,
+            'est_poisson' => $estPoisson,
         ];
     }
 
     $this->saveCart($cart);
 
-    return back()->with('success', '✅ ' . $produit->libelle_prod . ' ajouté au panier !');
+    $msg = $estPoisson
+        ? "✅ {$produit->libelle_prod} ({$calibreNom}) ajouté au panier !"
+        : "✅ {$produit->libelle_prod} ajouté au panier !";
+
+    return back()->with('success', $msg);
 }
+   
+
+  
     // ───────────────────────────────────────────
     // Mettre à jour la quantité
     // ───────────────────────────────────────────
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, string $id)
     {
         $request->validate(['quantite' => 'required|integer|min:1|max:50']);
 
@@ -113,7 +135,7 @@ class CartController extends Controller
     // Supprimer un article
     // ───────────────────────────────────────────
 
-    public function remove(int $id)
+    public function remove(string $id)
     {
         $cart = $this->getCart();
         unset($cart[$id]);

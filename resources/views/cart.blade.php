@@ -404,7 +404,7 @@
                     {{-- Image --}}
                     @if(!empty($item['image']))
                     <img
-                        src="{{ asset('images/' . $item['image']) }}"
+                        src="{{ asset('images/produits/' . $item['image']) }}"
                         alt="{{ $item['nom'] }}"
                         class="item-img"
                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
@@ -532,10 +532,9 @@
 
 @section('scripts')
 <script>
-    // Prix de chaque article (pour recalcul JS)
     const prices = {
         @foreach($cart as $id => $item)
-            {{ $id }}: {{ $item['prix'] }},
+            "{{ $id }}": {{ $item['prix'] }},
         @endforeach
     };
 
@@ -548,20 +547,17 @@
     }
 
     function updateQty(id) {
-        const input  = document.getElementById('qty-' + id);
-        const qty    = parseInt(input.value) || 1;
-        const price  = prices[id];
-
-        // Mise à jour affichage ligne
+        const input    = document.getElementById('qty-' + id);
+        const qty      = parseInt(input.value) || 1;
+        const price    = prices[id];
         const lineTotal = price * qty;
+
         document.getElementById('total-' + id).textContent =
             lineTotal.toLocaleString('fr-FR') + ' FCFA';
 
-        // Recalcul total
         recalcTotal();
 
-        // Appel AJAX pour sauvegarder en session
-        fetch('{{ route("cart.update", ":id") }}'.replace(':id', id), {
+        fetch('{{ url("cart/update") }}/' + encodeURIComponent(id), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -576,14 +572,10 @@
         let total = 0;
         Object.keys(prices).forEach(id => {
             const input = document.getElementById('qty-' + id);
-            if (input) {
-                total += prices[id] * (parseInt(input.value) || 1);
-            }
+            if (input) total += prices[id] * (parseInt(input.value) || 1);
         });
         document.getElementById('cart-subtotal').textContent = total.toLocaleString('fr-FR') + ' FCFA';
         document.getElementById('cart-total').textContent    = total.toLocaleString('fr-FR') + ' FCFA';
-
-        // Mise à jour badge navbar
         updateNavBadge();
     }
 

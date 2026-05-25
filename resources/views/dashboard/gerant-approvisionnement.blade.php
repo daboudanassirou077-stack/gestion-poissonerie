@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Approvisionnement - Gérant FreshMarket')
 
@@ -54,10 +54,20 @@
     .btn-success-fm { background:var(--green); color:#fff; }
     .btn-success-fm:hover { background:#219a52; color:#fff; }
     .btn-warning-fm { background:var(--secondary); color:#fff; }
+    .btn-danger-fm  { background:var(--accent); color:#fff; }
 
     .alert-fm { border-radius:10px; padding:12px 16px; font-size:14px; font-weight:600; margin-bottom:20px; display:flex; align-items:center; gap:8px; }
     .alert-success-fm { background:rgba(39,174,96,.1); border:1.5px solid rgba(39,174,96,.25); color:#1e7e44; }
     .alert-error-fm   { background:rgba(192,57,43,.08); border:1.5px solid rgba(192,57,43,.2); color:var(--accent); }
+
+    /* Lignes produits dans le bon */
+    .produit-ligne { display:flex; align-items:center; gap:10px; background:var(--light-bg); border-radius:10px; padding:10px 14px; margin-bottom:8px; }
+    .produit-ligne select, .produit-ligne input { flex:1; padding:8px 12px; border:1.5px solid #e5e5e5; border-radius:8px; font-size:13px; color:var(--dark); background:#fff; }
+    .produit-ligne .btn-remove-ligne { width:32px; height:32px; background:#fff; border:1.5px solid rgba(192,57,43,.3); border-radius:8px; color:var(--accent); cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .produit-ligne .btn-remove-ligne:hover { background:var(--accent); color:#fff; }
+
+    /* Produits tags dans le tableau */
+    .produit-tag { display:inline-flex; align-items:center; gap:4px; background:rgba(10,79,110,.08); color:var(--primary); padding:2px 8px; border-radius:20px; font-size:11px; font-weight:600; margin:2px; }
 </style>
 @endsection
 
@@ -93,32 +103,16 @@
             <div class="col-lg-3 mb-4">
                 <div class="dash-menu">
                     <div class="dash-menu-title">Gestion</div>
-                    <a href="{{ route('gerant.dashboard') }}" class="dash-menu-item">
-                        <i class="fas fa-tachometer-alt"></i> Tableau de bord
-                    </a>
-                    <a href="{{ route('gerant.produits') }}" class="dash-menu-item">
-                        <i class="fas fa-fish"></i> Produits
-                    </a>
-                    <a href="{{ route('gerant.stocks') }}" class="dash-menu-item">
-                        <i class="fas fa-boxes"></i> Stocks
-                    </a>
-                    <a href="{{ route('gerant.commandes') }}" class="dash-menu-item">
-                        <i class="fas fa-shopping-bag"></i> Commandes
-                    </a>
-                    <a href="{{ route('gerant.approvisionnement') }}" class="dash-menu-item active">
-                        <i class="fas fa-truck-loading"></i> Approvisionnement
-                    </a>
+                    <a href="{{ route('gerant.dashboard') }}" class="dash-menu-item"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a>
+                    <a href="{{ route('gerant.produits') }}" class="dash-menu-item"><i class="fas fa-fish"></i> Produits</a>
+                    <a href="{{ route('gerant.stocks') }}" class="dash-menu-item"><i class="fas fa-boxes"></i> Stocks</a>
+                    <a href="{{ route('gerant.commandes') }}" class="dash-menu-item"><i class="fas fa-shopping-bag"></i> Commandes</a>
+                    <a href="{{ route('gerant.approvisionnement') }}" class="dash-menu-item active"><i class="fas fa-truck-loading"></i> Approvisionnement</a>
                     <div class="dash-menu-title">Rapports</div>
-                    <a href="{{ route('gerant.etat-stock') }}" class="dash-menu-item">
-                        <i class="fas fa-chart-bar"></i> État des stocks
-                    </a>
-                    <a href="{{ route('gerant.etat-ventes') }}" class="dash-menu-item">
-                        <i class="fas fa-chart-line"></i> État des ventes
-                    </a>
+                    <a href="{{ route('gerant.etat-stock') }}" class="dash-menu-item"><i class="fas fa-chart-bar"></i> État des stocks</a>
+                    <a href="{{ route('gerant.etat-ventes') }}" class="dash-menu-item"><i class="fas fa-chart-line"></i> État des ventes</a>
                     <div class="dash-menu-title">Système</div>
-                    <a href="{{ route('home') }}" class="dash-menu-item">
-                        <i class="fas fa-home"></i> Voir le site
-                    </a>
+                    <a href="{{ route('home') }}" class="dash-menu-item"><i class="fas fa-home"></i> Voir le site</a>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="dash-menu-item w-100 text-danger" style="background:none;border:none;text-align:left;">
@@ -132,7 +126,6 @@
             <div class="col-lg-9">
 
                 <div class="row">
-
                     {{-- Formulaire ajout fournisseur --}}
                     <div class="col-lg-5 mb-4">
                         <div class="section-card">
@@ -182,13 +175,8 @@
                                     <div class="fournisseur-info">
                                         <h6>{{ $frs->nom_frs }} {{ $frs->prenom_frs }}</h6>
                                         <p>
-                                            <i class="fas fa-phone" style="color:var(--primary);"></i>
-                                            {{ $frs->telephone }}
-                                            @if($frs->email)
-                                                &nbsp;·&nbsp;
-                                                <i class="fas fa-envelope" style="color:var(--primary);"></i>
-                                                {{ $frs->email }}
-                                            @endif
+                                            <i class="fas fa-phone" style="color:var(--primary);"></i> {{ $frs->telephone }}
+                                            @if($frs->email) &nbsp;·&nbsp; <i class="fas fa-envelope" style="color:var(--primary);"></i> {{ $frs->email }} @endif
                                         </p>
                                         @if($frs->adresse)
                                         <p><i class="fas fa-map-marker-alt" style="color:var(--primary);"></i> {{ $frs->adresse }}</p>
@@ -204,13 +192,101 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
 
-                {{-- Bons de commande fournisseur --}}
+                {{-- ===== FORMULAIRE BON DE COMMANDE ===== --}}
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <h5>📋 Nouveau bon de commande fournisseur</h5>
+                        <button class="btn-sm-fm btn-primary-fm" onclick="toggleBonForm()">
+                            <i class="fas fa-plus"></i> Créer un bon
+                        </button>
+                    </div>
+                    <div id="bonForm" style="display:none;">
+                        <div class="section-card-body">
+                            <form action="{{ route('gerant.store-bon') }}" method="POST" id="formBon">
+                                @csrf
+
+                                <div class="row mb-3">
+                                    {{-- Fournisseur --}}
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label-fm">Fournisseur <em>*</em></label>
+                                        <select name="id_frs" class="form-ctrl" required>
+                                            <option value="">Choisir un fournisseur</option>
+                                            @foreach($fournisseurs as $frs)
+                                            <option value="{{ $frs->id_frs }}">{{ $frs->nom_frs }} {{ $frs->prenom_frs }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    {{-- Date --}}
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label-fm">Date <em>*</em></label>
+                                        <input type="date" name="date_bon" class="form-ctrl"
+                                               value="{{ now()->toDateString() }}" required>
+                                    </div>
+                                    {{-- Statut --}}
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label-fm">Statut</label>
+                                        <select name="statut" class="form-ctrl">
+                                            <option value="brouillon">📝 Brouillon</option>
+                                            <option value="envoye">📤 Envoyé</option>
+                                            <option value="recu">✅ Reçu</option>
+                                            <option value="annule">❌ Annulé</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {{-- Lignes produits --}}
+                                <label class="form-label-fm">Produits commandés <em>*</em></label>
+                                <div id="lignesProduits">
+                                    <div class="produit-ligne">
+                                        <select name="produits[0][id_prod]" required style="flex:2;">
+                                            <option value="">Choisir un produit</option>
+                                            @foreach($produits as $prod)
+                                            <option value="{{ $prod->id_prod }}">{{ $prod->libelle_prod }}</option>
+                                            @endforeach
+                                        </select>
+                                        <input type="number" name="produits[0][quantite]"
+                                               placeholder="Qté (kg)" min="0.01" step="0.01" required>
+                                        <input type="number" name="produits[0][prix]"
+                                               placeholder="Prix/kg (FCFA)" min="0" step="0.01" required>
+                                        <button type="button" class="btn-remove-ligne" onclick="removeLigne(this)" title="Supprimer">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn-sm-fm btn-warning-fm mt-2 mb-3" onclick="ajouterLigne()">
+                                    <i class="fas fa-plus"></i> Ajouter un produit
+                                </button>
+
+                                {{-- Montant total calculé --}}
+                                <div style="background:rgba(10,79,110,.06);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;">
+                                    <span style="font-size:14px;font-weight:700;color:var(--dark);">Montant total calculé</span>
+                                    <span style="font-size:18px;font-weight:800;color:var(--primary);" id="montantTotal">0 FCFA</span>
+                                </div>
+                                <input type="hidden" name="montant_total" id="inputMontantTotal" value="0">
+
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn-sm-fm btn-success-fm" style="padding:10px 20px;">
+                                        <i class="fas fa-save"></i> Enregistrer le bon
+                                    </button>
+                                    <button type="button" class="btn-sm-fm"
+                                            style="background:#f0f0f0;color:#666;padding:10px 20px;"
+                                            onclick="toggleBonForm()">
+                                        Annuler
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- ===== TABLEAU BONS DE COMMANDE ===== --}}
                 <div class="section-card">
                     <div class="section-card-header">
                         <h5>📋 Bons de commande fournisseurs</h5>
+                        <span style="font-size:13px;color:var(--muted);">{{ $bons->total() }} bon(s)</span>
                     </div>
                     <table class="admin-table">
                         <thead>
@@ -218,6 +294,7 @@
                                 <th>N° Bon</th>
                                 <th>Fournisseur</th>
                                 <th>Date</th>
+                                <th>Produits envoyés</th>
                                 <th>Montant</th>
                                 <th>Statut</th>
                             </tr>
@@ -227,17 +304,37 @@
                             <tr>
                                 <td><strong>#{{ $bon->id_bon }}</strong></td>
                                 <td>{{ $bon->fournisseur->nom_frs ?? '—' }}</td>
-                                <td>{{ $bon->date_bon instanceof \Carbon\Carbon ? $bon->date_bon->format('d/m/Y') : $bon->date_bon }}</td>
+                                <td style="font-size:13px;color:var(--muted);">
+                                    {{ \Carbon\Carbon::parse($bon->date_bon)->format('d/m/Y') }}
+                                </td>
+                                <td>
+                                    {{-- Afficher les produits du bon --}}
+                                    @if($bon->produits && $bon->produits->count() > 0)
+                                        @foreach($bon->produits as $prod)
+                                        <span class="produit-tag">
+                                            🐟 {{ $prod->libelle_prod }}
+                                            <span style="opacity:.7;">{{ $prod->pivot->quantite_cmd }}kg</span>
+                                        </span>
+                                        @endforeach
+                                    @else
+                                        <span style="color:var(--muted);font-size:12px;">—</span>
+                                    @endif
+                                </td>
                                 <td><strong>{{ number_format($bon->montant_total, 0, ',', ' ') }} FCFA</strong></td>
                                 <td>
                                     <span class="status-badge status-{{ $bon->statut }}">
-                                        {{ ucfirst($bon->statut) }}
+                                        @if($bon->statut === 'brouillon') 📝 Brouillon
+                                        @elseif($bon->statut === 'envoye') 📤 Envoyé
+                                        @elseif($bon->statut === 'recu') ✅ Reçu
+                                        @else ❌ Annulé
+                                        @endif
                                     </span>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" style="text-align:center;color:var(--muted);padding:40px;">
+                                <td colspan="6" style="text-align:center;color:var(--muted);padding:40px;">
+                                    <span style="font-size:36px;display:block;margin-bottom:10px;">📋</span>
                                     Aucun bon de commande pour le moment
                                 </td>
                             </tr>
@@ -257,4 +354,70 @@
     </div>
 </div>
 
+@endsection
+
+@section('scripts')
+<script>
+// Toggle formulaire bon
+function toggleBonForm() {
+    const form = document.getElementById('bonForm');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+// Compteur de lignes
+let ligneIndex = 1;
+
+// Ajouter une ligne produit
+function ajouterLigne() {
+    const container = document.getElementById('lignesProduits');
+    const div = document.createElement('div');
+    div.className = 'produit-ligne';
+    div.innerHTML = `
+        <select name="produits[${ligneIndex}][id_prod]" required style="flex:2;">
+            <option value="">Choisir un produit</option>
+            @foreach($produits as $prod)
+            <option value="{{ $prod->id_prod }}">{{ $prod->libelle_prod }}</option>
+            @endforeach
+        </select>
+        <input type="number" name="produits[${ligneIndex}][quantite]"
+               placeholder="Qté (kg)" min="0.01" step="0.01" required oninput="recalcTotal()">
+        <input type="number" name="produits[${ligneIndex}][prix]"
+               placeholder="Prix/kg (FCFA)" min="0" step="0.01" required oninput="recalcTotal()">
+        <button type="button" class="btn-remove-ligne" onclick="removeLigne(this)">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    container.appendChild(div);
+    ligneIndex++;
+    // Attacher les événements
+    div.querySelectorAll('input[type="number"]').forEach(i => i.addEventListener('input', recalcTotal));
+}
+
+// Supprimer une ligne
+function removeLigne(btn) {
+    const ligne = btn.closest('.produit-ligne');
+    const container = document.getElementById('lignesProduits');
+    if (container.children.length > 1) {
+        ligne.remove();
+        recalcTotal();
+    }
+}
+
+// Recalculer le montant total
+function recalcTotal() {
+    let total = 0;
+    document.querySelectorAll('.produit-ligne').forEach(ligne => {
+        const qty   = parseFloat(ligne.querySelector('input[name$="[quantite]"]')?.value) || 0;
+        const prix  = parseFloat(ligne.querySelector('input[name$="[prix]"]')?.value)     || 0;
+        total += qty * prix;
+    });
+    document.getElementById('montantTotal').textContent    = total.toLocaleString('fr-FR') + ' FCFA';
+    document.getElementById('inputMontantTotal').value     = total;
+}
+
+// Attacher événements à la première ligne
+document.querySelectorAll('.produit-ligne input[type="number"]').forEach(i => {
+    i.addEventListener('input', recalcTotal);
+});
+</script>
 @endsection
